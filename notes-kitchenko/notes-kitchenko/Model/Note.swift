@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct Reminder: Codable {
+struct Note: Codable {
     let title: String?
 }
