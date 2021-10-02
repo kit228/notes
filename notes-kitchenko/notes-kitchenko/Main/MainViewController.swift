@@ -34,10 +34,15 @@ class MainViewController: UIViewController {
         setupSubviews()
         configureConstraints()
         setupNotes()
+        addKeyboardObservers()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         configureNavigationBar()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        removeKeyboardObservers()
     }
     
     @objc private func addNote() {
@@ -90,8 +95,36 @@ class MainViewController: UIViewController {
         }
     }
     
+    // MARK: - Keyboard
+    
     @objc func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    private func addKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func removeKeyboardObservers() {
+        let defaultCenter = NotificationCenter.default
+        defaultCenter.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        defaultCenter.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func keyboardWillShow(_ notification:Notification) {
+
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            notesTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification:Notification) {
+
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            notesTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        }
     }
     
 }
