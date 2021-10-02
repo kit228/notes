@@ -75,7 +75,7 @@ class MainViewController: UIViewController {
     
     private func setupSubviews() {
         view.addSubview(notesTableView)
-        UITableView.appearance().backgroundColor = .brown
+        UITableView.appearance().backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "woodBoard"))
     }
     
     private func configureConstraints() {
@@ -143,7 +143,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView()
-        headerView.backgroundColor = .brown
+        headerView.backgroundColor = .clear
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         headerView.addGestureRecognizer(tapRecognizer)
         return headerView
@@ -156,6 +156,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell: NoteCell = tableView.dequeueReusableCell(withIdentifier: String.init(describing: NoteCell.self), for: indexPath) as? NoteCell else { return UITableViewCell() }
         cell.configureCell(with: notesArray[indexPath.section].text ?? "")
+        cell.selectionStyle = .none
         return cell
     }
     
