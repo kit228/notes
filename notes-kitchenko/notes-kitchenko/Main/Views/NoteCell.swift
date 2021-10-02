@@ -11,11 +11,12 @@ class NoteCell: UITableViewCell {
     
     // MARK: - UI Elements
     
-    private lazy var noteTextField: UITextField = {
-        let textField = UITextField()
-        textField.backgroundColor = UIColor(named: "noteColor")
-        textField.text = "wafwefwefwffew"
-        return textField
+    private lazy var noteTextView: UITextView = {
+        let textView = UITextView()
+        textView.backgroundColor = UIColor(named: "noteColor")
+        textView.textAlignment = .center
+        textView.font = UIFont.systemFont(ofSize: 20)
+        return textView
     }()
     
     private lazy var viewForTextField: UIView = {
@@ -30,6 +31,7 @@ class NoteCell: UITableViewCell {
         super.init(style: .default, reuseIdentifier: String.init(describing: NoteCell.self))
         
         setupSubviews()
+        //setupTapRecognizer()
     }
     
     required init?(coder: NSCoder) {
@@ -47,14 +49,13 @@ class NoteCell: UITableViewCell {
     private func setupSubviews() {
         contentView.backgroundColor = .brown
         contentView.addSubview(viewForTextField)
-        viewForTextField.addSubview(noteTextField)
+        viewForTextField.addSubview(noteTextView)
         configureConstraints()
     }
     
     private func configureConstraints() {
         
         // viewForTextField
-        
         viewForTextField.translatesAutoresizingMaskIntoConstraints = false
         let attributesTopBottom: [NSLayoutConstraint.Attribute] = [.top, .bottom]
         NSLayoutConstraint.activate(attributesTopBottom.map {
@@ -75,25 +76,34 @@ class NoteCell: UITableViewCell {
         
         
         // noteTextField
-        
-        noteTextField.translatesAutoresizingMaskIntoConstraints = false
+        noteTextView.translatesAutoresizingMaskIntoConstraints = false
         let attributesTopLeading: [NSLayoutConstraint.Attribute] = [.top, .leading]
         NSLayoutConstraint.activate(attributesTopLeading.map {
-            NSLayoutConstraint(item: noteTextField, attribute: $0, relatedBy: .equal, toItem: viewForTextField, attribute: $0, multiplier: 1, constant: 20)
+            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: viewForTextField, attribute: $0, multiplier: 1, constant: 20)
         })
-        noteTextField.translatesAutoresizingMaskIntoConstraints = false
+        noteTextView.translatesAutoresizingMaskIntoConstraints = false
         let attributesBottomLeading: [NSLayoutConstraint.Attribute] = [.bottom, .trailing]
         NSLayoutConstraint.activate(attributesBottomLeading.map {
-            NSLayoutConstraint(item: noteTextField, attribute: $0, relatedBy: .equal, toItem: viewForTextField, attribute: $0, multiplier: 1, constant: -20)
+            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: viewForTextField, attribute: $0, multiplier: 1, constant: -20)
         })
         
-//        noteTextField.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-//        noteTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-//        noteTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
-//        noteTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
-//        noteTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
+    }
+    
+    func configureCell(with text: String) {
+        noteTextView.text = text
     }
     
 
 }
+
+
+//extension NoteCell {
+//    func setupTapRecognizer() {
+//        let tapGestureRecognizer = UIGestureRecognizer(target: self, action: #selector(viewDidTapped))
+//        contentView.addGestureRecognizer(tapGestureRecognizer)
+//    }
+//    @objc func viewDidTapped() {
+//        contentView.endEditing(true)
+//        noteTextView.endEditing(true)
+//    }
+//}

@@ -9,10 +9,13 @@ import UIKit
 
 class MainViewController: UIViewController {
     
+    
+    private var notesArray: [Note] = []
+    
     // MARK: - UI Elements
     
     private lazy var notesTableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .plain)
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(NoteCell.self, forCellReuseIdentifier: String.init(describing: NoteCell.self))
@@ -30,6 +33,7 @@ class MainViewController: UIViewController {
         
         setupSubviews()
         configureConstraints()
+        setupNotes()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -37,8 +41,19 @@ class MainViewController: UIViewController {
     }
     
     @objc private func addNote() {
-        print("kek")
+        notesArray.append(Note(text: ""))
+        reloadTableView()
     }
+    
+    // MARK: - Setup notes
+    
+    private func setupNotes() {
+        if notesArray.isEmpty {
+            notesArray.append(Note(text: "Это Ваша первая заметка"))
+        }
+        reloadTableView()
+    }
+    
     
     // MARK: - NavigationController
     
@@ -65,7 +80,16 @@ class MainViewController: UIViewController {
             NSLayoutConstraint(item: notesTableView, attribute: $0, relatedBy: .equal, toItem: view, attribute: $0, multiplier: 1, constant: 0)
         })
     }
-
+    
+    
+    // MARK: - Helpers
+    
+    private func reloadTableView() {
+        DispatchQueue.main.async {
+            self.notesTableView.reloadData()
+        }
+    }
+    
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -73,7 +97,7 @@ class MainViewController: UIViewController {
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        3
+        notesArray.count
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -91,7 +115,8 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: NoteCell = tableView.dequeueReusableCell(withIdentifier: String.init(describing: NoteCell.self), for: indexPath) as! NoteCell
+        guard let cell: NoteCell = tableView.dequeueReusableCell(withIdentifier: String.init(describing: NoteCell.self), for: indexPath) as? NoteCell else { return UITableViewCell() }
+        cell.configureCell(with: notesArray[indexPath.section].text ?? "")
         return cell
     }
     
