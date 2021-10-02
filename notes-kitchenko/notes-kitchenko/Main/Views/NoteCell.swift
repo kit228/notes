@@ -31,7 +31,6 @@ class NoteCell: UITableViewCell {
         super.init(style: .default, reuseIdentifier: String.init(describing: NoteCell.self))
         
         setupSubviews()
-        //setupTapRecognizer()
     }
     
     required init?(coder: NSCoder) {
@@ -97,13 +96,3 @@ class NoteCell: UITableViewCell {
 }
 
 
-//extension NoteCell {
-//    func setupTapRecognizer() {
-//        let tapGestureRecognizer = UIGestureRecognizer(target: self, action: #selector(viewDidTapped))
-//        contentView.addGestureRecognizer(tapGestureRecognizer)
-//    }
-//    @objc func viewDidTapped() {
-//        contentView.endEditing(true)
-//        noteTextView.endEditing(true)
-//    }
-//}

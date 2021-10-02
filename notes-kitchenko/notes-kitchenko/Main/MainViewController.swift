@@ -90,6 +90,10 @@ class MainViewController: UIViewController {
         }
     }
     
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -107,6 +111,8 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView()
         headerView.backgroundColor = .brown
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        headerView.addGestureRecognizer(tapRecognizer)
         return headerView
     }
     
@@ -118,6 +124,10 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell: NoteCell = tableView.dequeueReusableCell(withIdentifier: String.init(describing: NoteCell.self), for: indexPath) as? NoteCell else { return UITableViewCell() }
         cell.configureCell(with: notesArray[indexPath.section].text ?? "")
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dismissKeyboard()
     }
     
     
