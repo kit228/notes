@@ -26,11 +26,6 @@ class NoteCell: UITableViewCell {
         return imageView
     }()
     
-    private lazy var viewForTextField: UIView = {
-        let view = UIView()
-        return view
-    }()
-    
     // MARK: - Lifecycle
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -53,8 +48,7 @@ class NoteCell: UITableViewCell {
     
     private func setupSubviews() {
         self.backgroundColor = .clear
-        contentView.addSubview(viewForTextField)
-        viewForTextField.addSubview(noteImageView)
+        contentView.addSubview(noteImageView)
         noteImageView.addSubview(noteTextView)
         noteImageView.isUserInteractionEnabled = true
         configureConstraints()
@@ -63,45 +57,8 @@ class NoteCell: UITableViewCell {
     // MARK: - Constraints
     
     private func configureConstraints() {
-        setViewForTextFieldConstraints()
-        setNoteTextViewConstraints()
         setNoteImageViewConstraints()
-    }
-    
-    func setViewForTextFieldConstraints() {
-        viewForTextField.translatesAutoresizingMaskIntoConstraints = false
-        let attributesTopBottom: [NSLayoutConstraint.Attribute] = [.top, .bottom]
-        NSLayoutConstraint.activate(attributesTopBottom.map {
-            NSLayoutConstraint(item: viewForTextField, attribute: $0, relatedBy: .equal, toItem: contentView, attribute: $0, multiplier: 1, constant: 0)
-        })
-        let attributesLeading: [NSLayoutConstraint.Attribute] = [.leading]
-        NSLayoutConstraint.activate(attributesLeading.map {
-            NSLayoutConstraint(item: viewForTextField, attribute: $0, relatedBy: .equal, toItem: contentView, attribute: $0, multiplier: 1, constant: 50)
-        })
-        let attributesTrailing: [NSLayoutConstraint.Attribute] = [.trailing]
-        NSLayoutConstraint.activate(attributesTrailing.map {
-            NSLayoutConstraint(item: viewForTextField, attribute: $0, relatedBy: .equal, toItem: contentView, attribute: $0, multiplier: 1, constant: -50)
-        })
-        let attributesHeight: [NSLayoutConstraint.Attribute] = [.height]
-        NSLayoutConstraint.activate(attributesHeight.map {
-            NSLayoutConstraint(item: viewForTextField, attribute: $0, relatedBy: .equal, toItem: nil, attribute: $0, multiplier: 1, constant: 300)
-        })
-    }
-    
-    func setNoteTextViewConstraints() {
-        noteTextView.translatesAutoresizingMaskIntoConstraints = false
-        let attributesTop: [NSLayoutConstraint.Attribute] = [.top]
-        NSLayoutConstraint.activate(attributesTop.map {
-            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: viewForTextField, attribute: $0, multiplier: 1, constant: 40)
-        })
-        let attributesLeading: [NSLayoutConstraint.Attribute] = [.leading]
-        NSLayoutConstraint.activate(attributesLeading.map {
-            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: viewForTextField, attribute: $0, multiplier: 1, constant: 20)
-        })
-        let attributesBottomLeading: [NSLayoutConstraint.Attribute] = [.bottom, .trailing]
-        NSLayoutConstraint.activate(attributesBottomLeading.map {
-            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: viewForTextField, attribute: $0, multiplier: 1, constant: -20)
-        })
+        setNoteTextViewConstraints()
     }
     
     func setNoteImageViewConstraints() {
@@ -121,6 +78,26 @@ class NoteCell: UITableViewCell {
         let attributesHeight: [NSLayoutConstraint.Attribute] = [.height]
         NSLayoutConstraint.activate(attributesHeight.map {
             NSLayoutConstraint(item: noteImageView, attribute: $0, relatedBy: .equal, toItem: nil, attribute: $0, multiplier: 1, constant: 300)
+        })
+    }
+    
+    func setNoteTextViewConstraints() {
+        noteTextView.translatesAutoresizingMaskIntoConstraints = false
+        let attributesTop: [NSLayoutConstraint.Attribute] = [.top]
+        NSLayoutConstraint.activate(attributesTop.map {
+            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: noteImageView, attribute: $0, multiplier: 1, constant: 40)
+        })
+        let attributesLeading: [NSLayoutConstraint.Attribute] = [.leading]
+        NSLayoutConstraint.activate(attributesLeading.map {
+            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: noteImageView, attribute: $0, multiplier: 1, constant: 25)
+        })
+        let attributesTrailing: [NSLayoutConstraint.Attribute] = [.trailing]
+        NSLayoutConstraint.activate(attributesTrailing.map {
+            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: noteImageView, attribute: $0, multiplier: 1, constant: -25)
+        })
+        let attributesBottom: [NSLayoutConstraint.Attribute] = [.bottom]
+        NSLayoutConstraint.activate(attributesBottom.map {
+            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: noteImageView, attribute: $0, multiplier: 1, constant: -20)
         })
     }
     
