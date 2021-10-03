@@ -128,7 +128,6 @@ final class NoteCell: UITableViewCell, UITextViewDelegate {
 }
 
 
-
 extension NoteCell {
     
     // MARK: - Constraints
