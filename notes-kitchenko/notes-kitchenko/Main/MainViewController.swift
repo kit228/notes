@@ -40,7 +40,7 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        notesArray = userDefaultHelper.loadNotesFromUserDefaults()
+        loadNotesFromUserDefaults()
         setupSubviews()
         configureConstraints()
         setupNotes()
@@ -108,6 +108,20 @@ final class MainViewController: UIViewController {
         }
     }
     
+    // MARK: - User defaults
+    
+    private func loadNotesFromUserDefaults() {
+        notesArray = userDefaultHelper.loadNotesFromUserDefaults()
+    }
+    
+    private func saveToUserDefaults() {
+        userDefaultHelper.saveNotesToUserDefaults(notes: notesArray)
+    }
+    
+    private func deleteNotesFromUserDefaults() {
+        userDefaultHelper.deleteAllNotesFromUserDefaults()
+    }
+    
     // MARK: - Alert
     
     private func showAlert() {
@@ -120,8 +134,9 @@ final class MainViewController: UIViewController {
     
     // MARK: - Keyboard
     
-    @objc func dismissKeyboard() {
+    @objc func dismissKeyboardAndStopMovingNotes() {
         view.endEditing(true)
+        stopMovingNotes()
     }
     
     private func addKeyboardObservers() {
@@ -144,9 +159,7 @@ final class MainViewController: UIViewController {
     }
     
     @objc func keyboardWillHide(_ notification:Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            notesTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        }
+        notesTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
 }
@@ -154,21 +167,34 @@ final class MainViewController: UIViewController {
 // MARK: - MainViewControllerProtocol
 
 extension MainViewController: MainViewControllerProtocol {
+    
     func saveTextNote(text: String, at element: Int) {
         notesArray[element].text = text
         print("Сохраняем текст заметки = \(text)")
-        userDefaultHelper.saveNotesToUserDefaults(notes: notesArray)
+        saveToUserDefaults()
     }
     
     func deleteNote(at element: Int) {
         print("Удаляем ячейку с номером: \(element)")
         notesArray.remove(at: element)
         if notesArray.isEmpty {
-            userDefaultHelper.deleteAllNotesFromUserDefaults()
+            deleteNotesFromUserDefaults()
         } else {
-            userDefaultHelper.saveNotesToUserDefaults(notes: notesArray)
+            saveToUserDefaults()
         }
         reloadTableView()
+    }
+    
+    // MARK: - Setup moving notes
+    
+    @objc func startMovingNotes() {
+        notesTableView.isEditing = true
+    }
+    
+    private func stopMovingNotes() {
+        if notesTableView.isEditing {
+            notesTableView.isEditing = false
+        }
     }
 }
 
@@ -187,8 +213,10 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView()
         headerView.backgroundColor = .clear
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardAndStopMovingNotes))
         headerView.addGestureRecognizer(tapRecognizer)
+        let longTap = UILongPressGestureRecognizer(target: self, action: #selector(startMovingNotes))
+        headerView.addGestureRecognizer(longTap)
         return headerView
     }
     
@@ -200,14 +228,32 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell: NoteCell = tableView.dequeueReusableCell(withIdentifier: String.init(describing: NoteCell.self), for: indexPath) as? NoteCell else { return UITableViewCell() }
         cell.mainViewControler = self
         cell.configureCell(with: notesArray[indexPath.section].text ?? "", indexPath: indexPath)
-        cell.selectionStyle = .none
+        cell.selectionStyle = .none // чтобы не подсвеивалась при нажатии
+        let longTap = UILongPressGestureRecognizer(target: self, action: #selector(startMovingNotes))
+        cell.addGestureRecognizer(longTap)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        dismissKeyboard()
+        dismissKeyboardAndStopMovingNotes()
     }
     
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        true
+    }
     
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        notesArray.swapAt(sourceIndexPath.row, destinationIndexPath.row)
+        stopMovingNotes()
+        saveToUserDefaults()
+    }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        false
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .none
+    }
 }
 
