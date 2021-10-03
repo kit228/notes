@@ -7,6 +7,8 @@
 
 import UIKit
 
+let kMaximumCharacters = 100
+
 final class NoteCell: UITableViewCell, UITextViewDelegate {
     
     // MARK: - Private
@@ -99,6 +101,13 @@ final class NoteCell: UITableViewCell, UITextViewDelegate {
     }
     
     // MARK: - Helpers
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let currentText = noteTextView.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: text)
+        return updatedText.count <= kMaximumCharacters
+    }
     
     func textViewDidEndEditing(_ textView: UITextView) {
         saveText()

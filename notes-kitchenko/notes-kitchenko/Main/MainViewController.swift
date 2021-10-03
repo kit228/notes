@@ -12,6 +12,8 @@ protocol MainViewControllerProtocol: AnyObject {
     func deleteNote(at element: Int)
 }
 
+let kMaxNotes: Int = 10
+
 final class MainViewController: UIViewController {
     
     private var notesArray: [Note] = []
@@ -63,8 +65,12 @@ final class MainViewController: UIViewController {
     }
     
     @objc private func addNote() {
-        notesArray.append(Note(text: ""))
-        reloadTableView()
+        if notesArray.count == kMaxNotes {
+            showAlert()
+        } else {
+            notesArray.append(Note(text: ""))
+            reloadTableView()
+        }
     }
     
     // MARK: - NavigationController
@@ -99,6 +105,16 @@ final class MainViewController: UIViewController {
     private func reloadTableView() {
         DispatchQueue.main.async {
             self.notesTableView.reloadData()
+        }
+    }
+    
+    // MARK: - Alert
+    
+    private func showAlert() {
+        let alert = UIAlertController(title: nil, message: "Это максимальное количество заметок", preferredStyle: .alert)
+        self.present(alert, animated: true, completion: nil)
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
+            alert.dismiss(animated: true, completion: nil)
         }
     }
     
