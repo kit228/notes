@@ -138,7 +138,7 @@ extension NoteCell {
         })
         let attributesLeading: [NSLayoutConstraint.Attribute] = [.leading]
         NSLayoutConstraint.activate(attributesLeading.map {
-            NSLayoutConstraint(item: noteImageView, attribute: $0, relatedBy: .equal, toItem: contentView, attribute: $0, multiplier: 1, constant: 60)
+            NSLayoutConstraint(item: noteImageView, attribute: $0, relatedBy: .equal, toItem: contentView, attribute: $0, multiplier: 1, constant: 70)
         })
         let attributesTrailing: [NSLayoutConstraint.Attribute] = [.trailing]
         NSLayoutConstraint.activate(attributesTrailing.map {
