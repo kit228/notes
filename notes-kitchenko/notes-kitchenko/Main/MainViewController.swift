@@ -15,6 +15,7 @@ protocol MainViewControllerProtocol: AnyObject {
 final class MainViewController: UIViewController {
     
     private var notesArray: [Note] = []
+    private let userDefaultHelper = UserDefaultsService()
     
     // MARK: - UI Elements
     
@@ -31,10 +32,13 @@ final class MainViewController: UIViewController {
         barButtonSystemItem: .add,
         target: self,
         action: #selector(addNote))
-
+    
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        notesArray = userDefaultHelper.loadNotesFromUserDefaults()
         setupSubviews()
         configureConstraints()
         setupNotes()
@@ -137,11 +141,17 @@ extension MainViewController: MainViewControllerProtocol {
     func saveTextNote(text: String, at element: Int) {
         notesArray[element].text = text
         print("Сохраняем текст заметки = \(text)")
+        userDefaultHelper.saveNotesToUserDefaults(notes: notesArray)
     }
     
     func deleteNote(at element: Int) {
         print("Удаляем ячейку с номером: \(element)")
         notesArray.remove(at: element)
+        if notesArray.isEmpty {
+            userDefaultHelper.deleteAllNotesFromUserDefaults()
+        } else {
+            userDefaultHelper.saveNotesToUserDefaults(notes: notesArray)
+        }
         reloadTableView()
     }
 }
