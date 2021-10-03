@@ -32,6 +32,7 @@ class NoteCell: UITableViewCell {
         super.init(style: .default, reuseIdentifier: String.init(describing: NoteCell.self))
         
         setupSubviews()
+        addDoneButton()
     }
     
     required init?(coder: NSCoder) {
@@ -42,6 +43,21 @@ class NoteCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    // MARK: - Keyboard
+    
+    @objc func dismissKeyboard() {
+        contentView.endEditing(true)
+    }
+    
+    private func addDoneButton() {
+        let toolbar = UIToolbar()
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(dismissKeyboard))
+        toolbar.setItems([flexSpace, doneButton], animated: true)
+        toolbar.sizeToFit()
+        noteTextView.inputAccessoryView = toolbar
     }
     
     // MARK: - Layout
