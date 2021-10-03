@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F4BA7A93270795040089F299 /* NoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BA7A92270795040089F299 /* NoteCell.swift */; };
+		F4BA7A962709B9AE0089F299 /* UIViewController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BA7A952709B9AE0089F299 /* UIViewController+Keyboard.swift */; };
 		F4E95CAC27061CA6004AAA12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E95CAB27061CA6004AAA12 /* AppDelegate.swift */; };
 		F4E95CAE27061CA6004AAA12 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E95CAD27061CA6004AAA12 /* SceneDelegate.swift */; };
 		F4E95CB027061CA6004AAA12 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E95CAF27061CA6004AAA12 /* MainViewController.swift */; };
@@ -18,6 +19,7 @@
 
 /* Begin PBXFileReference section */
 		F4BA7A92270795040089F299 /* NoteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCell.swift; sourceTree = "<group>"; };
+		F4BA7A952709B9AE0089F299 /* UIViewController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Keyboard.swift"; sourceTree = "<group>"; };
 		F4E95CA827061CA6004AAA12 /* notes-kitchenko.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "notes-kitchenko.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4E95CAB27061CA6004AAA12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F4E95CAD27061CA6004AAA12 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -55,6 +57,14 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		F4BA7A972709B9B30089F299 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				F4BA7A952709B9AE0089F299 /* UIViewController+Keyboard.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		F4E95C9F27061CA6004AAA12 = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +88,7 @@
 				F4E95CAD27061CA6004AAA12 /* SceneDelegate.swift */,
 				F4E95CC127063830004AAA12 /* Main */,
 				F4BA7A91270794CF0089F299 /* Model */,
+				F4BA7A972709B9B30089F299 /* Extensions */,
 				F4E95CB427061CAA004AAA12 /* Assets.xcassets */,
 				F4E95CB627061CAA004AAA12 /* LaunchScreen.storyboard */,
 				F4E95CB927061CAA004AAA12 /* Info.plist */,
@@ -164,6 +175,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4E95CB027061CA6004AAA12 /* MainViewController.swift in Sources */,
+				F4BA7A962709B9AE0089F299 /* UIViewController+Keyboard.swift in Sources */,
 				F4E95CAC27061CA6004AAA12 /* AppDelegate.swift in Sources */,
 				F4BA7A93270795040089F299 /* NoteCell.swift in Sources */,
 				F4E95CAE27061CA6004AAA12 /* SceneDelegate.swift in Sources */,

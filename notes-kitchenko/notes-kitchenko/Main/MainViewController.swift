@@ -7,8 +7,12 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
-    
+protocol MainViewControllerProtocol: AnyObject {
+    func saveTextNote(text: String, at element: Int)
+    func deleteNote(at element: Int)
+}
+
+final class MainViewController: UIViewController {
     
     private var notesArray: [Note] = []
     
@@ -45,11 +49,6 @@ class MainViewController: UIViewController {
         removeKeyboardObservers()
     }
     
-    @objc private func addNote() {
-        notesArray.append(Note(text: ""))
-        reloadTableView()
-    }
-    
     // MARK: - Setup notes
     
     private func setupNotes() {
@@ -59,6 +58,10 @@ class MainViewController: UIViewController {
         reloadTableView()
     }
     
+    @objc private func addNote() {
+        notesArray.append(Note(text: ""))
+        reloadTableView()
+    }
     
     // MARK: - NavigationController
     
@@ -121,12 +124,26 @@ class MainViewController: UIViewController {
     }
     
     @objc func keyboardWillHide(_ notification:Notification) {
-
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             notesTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         }
     }
     
+}
+
+// MARK: - MainViewControllerProtocol
+
+extension MainViewController: MainViewControllerProtocol {
+    func saveTextNote(text: String, at element: Int) {
+        notesArray[element].text = text
+        print("Сохраняем текст заметки = \(text)")
+    }
+    
+    func deleteNote(at element: Int) {
+        print("Удаляем ячейку с номером: \(element)")
+        notesArray.remove(at: element)
+        reloadTableView()
+    }
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -155,7 +172,8 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell: NoteCell = tableView.dequeueReusableCell(withIdentifier: String.init(describing: NoteCell.self), for: indexPath) as? NoteCell else { return UITableViewCell() }
-        cell.configureCell(with: notesArray[indexPath.section].text ?? "")
+        cell.mainViewControler = self
+        cell.configureCell(with: notesArray[indexPath.section].text ?? "", indexPath: indexPath)
         cell.selectionStyle = .none
         return cell
     }

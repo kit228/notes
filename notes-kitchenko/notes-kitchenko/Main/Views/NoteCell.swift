@@ -7,9 +7,26 @@
 
 import UIKit
 
-class NoteCell: UITableViewCell {
+final class NoteCell: UITableViewCell, UITextViewDelegate {
+    
+    // MARK: - Private
+    
+    private var textForComparisonBeforeSaving = ""
+    private var indexPath: IndexPath?
+    
+    weak var mainViewControler: MainViewControllerProtocol?
     
     // MARK: - UI Elements
+    
+    private lazy var deleteButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .clear
+//        button.addTarget(self, action: #selector(deleteNote), for: .touchUpInside)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(deleteNote))
+        tap.numberOfTapsRequired = 2
+        button.addGestureRecognizer(tap)
+        return button
+    }()
     
     private lazy var noteTextView: UITextView = {
         let textView = UITextView()
@@ -33,6 +50,7 @@ class NoteCell: UITableViewCell {
         
         setupSubviews()
         addDoneButton()
+        noteTextView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -67,14 +85,49 @@ class NoteCell: UITableViewCell {
         contentView.addSubview(noteImageView)
         noteImageView.addSubview(noteTextView)
         noteImageView.isUserInteractionEnabled = true
+        noteImageView.addSubview(deleteButton)
         configureConstraints()
     }
+    
+    // MARK: - Configure cell
+    
+    func configureCell(with text: String, indexPath: IndexPath) {
+        textForComparisonBeforeSaving = text
+        noteTextView.text = text
+        self.indexPath = indexPath
+        print("Создана ячейка с indexPath.section = \(indexPath.section)")
+    }
+    
+    // MARK: - Helpers
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        saveText()
+    }
+    
+    func saveText() {
+        guard let indexPathSection = indexPath?.section else { return }
+        if noteTextView.text != textForComparisonBeforeSaving  && !noteTextView.text.isEmpty {
+            print("Нужно сохранить текст ячейки")
+            mainViewControler?.saveTextNote(text: noteTextView.text, at: indexPathSection)
+        }
+    }
+    
+    @objc func deleteNote() {
+        guard let indexPathSection = indexPath?.section else { return }
+        mainViewControler?.deleteNote(at: indexPathSection)
+    }
+}
+
+
+
+extension NoteCell {
     
     // MARK: - Constraints
     
     private func configureConstraints() {
         setNoteImageViewConstraints()
         setNoteTextViewConstraints()
+        setDeleteButtonConstrains()
     }
     
     func setNoteImageViewConstraints() {
@@ -85,7 +138,7 @@ class NoteCell: UITableViewCell {
         })
         let attributesLeading: [NSLayoutConstraint.Attribute] = [.leading]
         NSLayoutConstraint.activate(attributesLeading.map {
-            NSLayoutConstraint(item: noteImageView, attribute: $0, relatedBy: .equal, toItem: contentView, attribute: $0, multiplier: 1, constant: 50)
+            NSLayoutConstraint(item: noteImageView, attribute: $0, relatedBy: .equal, toItem: contentView, attribute: $0, multiplier: 1, constant: 60)
         })
         let attributesTrailing: [NSLayoutConstraint.Attribute] = [.trailing]
         NSLayoutConstraint.activate(attributesTrailing.map {
@@ -101,7 +154,7 @@ class NoteCell: UITableViewCell {
         noteTextView.translatesAutoresizingMaskIntoConstraints = false
         let attributesTop: [NSLayoutConstraint.Attribute] = [.top]
         NSLayoutConstraint.activate(attributesTop.map {
-            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: noteImageView, attribute: $0, multiplier: 1, constant: 40)
+            NSLayoutConstraint(item: noteTextView, attribute: $0, relatedBy: .equal, toItem: noteImageView, attribute: $0, multiplier: 1, constant: 50)
         })
         let attributesLeading: [NSLayoutConstraint.Attribute] = [.leading]
         NSLayoutConstraint.activate(attributesLeading.map {
@@ -117,13 +170,14 @@ class NoteCell: UITableViewCell {
         })
     }
     
-    // MARK: - Configure cell
-    
-    func configureCell(with text: String) {
-        noteTextView.text = text
+    func setDeleteButtonConstrains() {
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+        let attributesHeightWidth: [NSLayoutConstraint.Attribute] = [.height, .width]
+        NSLayoutConstraint.activate(attributesHeightWidth.map {
+            NSLayoutConstraint(item: deleteButton, attribute: $0, relatedBy: .equal, toItem: nil, attribute: $0, multiplier: 1, constant: 40)
+        })
+        NSLayoutConstraint.activate([deleteButton.centerXAnchor.constraint(equalTo: noteImageView.centerXAnchor)])
     }
-    
-
 }
 
 

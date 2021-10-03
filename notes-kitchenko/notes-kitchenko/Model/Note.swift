@@ -8,5 +8,5 @@
 import Foundation
 
 struct Note: Codable {
-    let text: String
+    var text: String
 }
